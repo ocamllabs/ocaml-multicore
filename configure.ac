@@ -460,7 +460,7 @@ AS_CASE([$ocaml_cv_cc_vendor],
   [xlc-*],
     [CPP="$CC -E -qnoppline"], # suppress incompatible XLC line directives
   [msvc-*],
-    [CPP="$CC -nologo -EP"];
+    [CPP="$CC -nologo -EP"],
 #  TODO: why can we not use $CPP in multicore, fix this?
   [CPP="$CC -E -P"])
 
