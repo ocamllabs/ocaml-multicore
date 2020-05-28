@@ -1767,8 +1767,8 @@ cclibs="$cclibs $mathlib"
 
 AS_CASE([$host],
   [*-*-mingw32],
-    [bytecclibs="-lws2_32 -lversion"
-    nativecclibs="-lws2_32 -lversion"],
+    [bytecclibs="-lws2_32 -lversion -lpthread -lgcc_eh"
+    nativecclibs="-lws2_32 -lversion -lpthread -lgcc_eh"],
   [*-pc-windows],
     [bytecclibs="advapi32.lib ws2_32.lib version.lib"
     nativecclibs="advapi32.lib ws2_32.lib version.lib"],
