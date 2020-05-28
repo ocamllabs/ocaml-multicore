@@ -28,7 +28,9 @@ __declspec(noreturn) void __cdecl abort(void);
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#ifndef _WIN32
 #include <execinfo.h>
+#endif
 #include <stdlib.h>
 #include "caml/config.h"
 #include "caml/misc.h"
@@ -55,15 +57,21 @@ void print_trace (void)
   char **strings;
   size_t i;
 
+#ifdef _WIN32
+  size = 0;
+#else
   size = backtrace (array, 10);
   strings = backtrace_symbols (array, size);
+#endif
 
   caml_gc_log ("Obtained %zd stack frames.", size);
 
   for (i = 0; i < size; i++)
     caml_gc_log ("%s", strings[i]);
 
+#ifndef _WIN32
   free (strings);
+#endif
 }
 
 void caml_failed_assert (char * expr, char_os * file_os, int line)
