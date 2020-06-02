@@ -1006,13 +1006,13 @@ LBL(frame_runstack):
         movq    Handler_value(%r11), %rbx
 1:  /* Switch back to parent stack and free current */
         movq    Handler_parent(%r11), %r10
-        movq    Caml_state(current_stack), %rdi
+        movq    Caml_state(current_stack), C_ARG_1
         movq    %r10, Caml_state(current_stack)
         movq    Stack_sp(%r10), %r13 /* saved across C call */
         movq    %rax, %r12 /* save %rax across C call */
         movq    Caml_state(c_stack), %rsp
         /* FIXME: CFI here */
-        call    GCALL(caml_free_stack)
+        C_call  (GCALL(caml_free_stack))
         movq    %r13, %rsp
 CFI_RESTORE_STATE
         movq    %r12, %rax
