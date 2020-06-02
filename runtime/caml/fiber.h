@@ -25,6 +25,7 @@ struct stack_info {
 #endif
   struct stack_handler* handler;
   uintnat magic;
+  /*uintnat dummy;*/ /* FIXNAT uintnat dummy; */
 };
 
 CAML_STATIC_ASSERT(sizeof(struct stack_info) == Stack_ctx_words * sizeof(value));
