@@ -635,7 +635,7 @@ let emit_instr fallthrough i =
           record_frame Reg.Set.empty false i.dbg ~label:label_after
         end
         *)
-  | Lop(Iextcall {func; alloc; stack_ofs; label_after}) ->
+  | Lop(Iextcall {func; alloc = _alloc; stack_ofs; label_after}) ->
       add_used_symbol func;
       let base_stack_size =
         if Arch.win64 then
@@ -651,7 +651,7 @@ let emit_instr fallthrough i =
         if Config.stats then begin
           I.inc (domain_field Domainstate.Domain_extcall_alloc_stackargs)
         end;
-      end else if alloc then begin
+      end else if (*alloc*) true (* COMBAK *) then begin
         load_symbol_addr func rax;
         emit_call "caml_c_call";
         record_frame i.live false i.dbg ~label:label_after;
