@@ -570,7 +570,7 @@ static LONG CALLBACK
     (char *)(pc) <= caml_code_area_end)     \
 || ((char *)(pc) >= &caml_system__code_begin && \
     (char *)(pc) <= &caml_system__code_end)     \
-|| (Classify_addr(pc) & In_code_area) )
+/* FIXME || (Classify_addr(pc) & In_code_area) */)
 extern char caml_system__code_begin, caml_system__code_end;
 
 
