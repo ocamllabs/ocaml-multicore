@@ -100,9 +100,9 @@ libcamlrunpic_OBJECTS := $(BYTECODE_C_SOURCES:.c=_bpic.$(O))
 
 libasmrun_OBJECTS := $(NATIVE_C_SOURCES:.c=_n.$(O)) $(ASM_OBJECTS)
 
-libasmrund_OBJECTS := $(NATIVE_C_SOURCES:.c=_nd.$(O)) $(ASM_OBJECTS)
+libasmrund_OBJECTS := $(NATIVE_C_SOURCES:.c=_nd.$(O)) $(ASM_OBJECTS:.$(O)=_d.$(O))
 
-libasmruni_OBJECTS := $(NATIVE_C_SOURCES:.c=_ni.$(O)) $(ASM_OBJECTS)
+libasmruni_OBJECTS := $(NATIVE_C_SOURCES:.c=_ni.$(O)) $(ASM_OBJECTS:.$(O)=_i.$(O))
 
 libasmrunpic_OBJECTS := $(NATIVE_C_SOURCES:.c=_npic.$(O)) \
   $(ASM_OBJECTS:.$(O)=_libasmrunpic.$(O))
@@ -350,12 +350,19 @@ $(foreach object_type,$(subst %,,$(object_types)), \
 
 # Compilation of assembly files
 
-%.o: %.S
-	$(ASPP) $(ASPPFLAGS) -o $@ $< || \
+ASPP_ERROR = \
 	{ echo "If your assembler produced syntax errors, it is probably";\
           echo "unhappy with the preprocessor. Check your assembler, or";\
           echo "try producing $*.o by hand.";\
           exit 2; }
+%.o: %.S
+	$(ASPP) $(ASPPFLAGS) -o $@ $< || $(ASPP_ERROR)
+
+%_d.o: %.S
+	$(ASPP) $(ASPPFLAGS) $(OC_DEBUG_CPPFLAGS) -o $@ $< || $(ASPP_ERROR)
+
+%_i.o: %.S
+	$(ASPP) $(ASPPFLAGS) $(OC_INSTR_CPPFLAGS) -o $@ $< || $(ASPP_ERROR)
 
 %_libasmrunpic.o: %.S
 	$(ASPP) $(ASPPFLAGS) $(SHAREDLIB_CFLAGS) -o $@ $<
@@ -371,6 +378,18 @@ amd64nt.obj: amd64nt.asm domain_state64.inc
 
 i386nt.obj: i386nt.asm domain_state32.inc
 	$(ASM)$@ $(ASMFLAGS) $<
+
+amd64nt_d.obj: amd64nt.asm domain_state64.inc
+	$(ASM)$@ $(ASMFLAGS) $(OC_DEBUG_CPPFLAGS) $<
+
+i386nt_d.obj: i386nt.asm domain_state32.inc
+	$(ASM)$@ $(ASMFLAGS) $(OC_DEBUG_CPPFLAGS) $<
+
+amd64nt_i.obj: amd64nt.asm domain_state64.inc
+	$(ASM)$@ $(ASMFLAGS) $(OC_INSTR_CPPFLAGS) $<
+
+i386nt_i.obj: i386nt.asm domain_state32.inc
+	$(ASM)$@ $(ASMFLAGS) $(OC_INSTR_CPPFLAGS) $<
 
 %_libasmrunpic.obj: %.asm
 	$(ASM)$@ $(ASMFLAGS) $<
