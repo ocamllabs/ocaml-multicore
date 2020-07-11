@@ -464,7 +464,7 @@ AS_CASE([$ocaml_cv_cc_vendor],
   [xlc-*],
     [CPP="$CC -E -qnoppline"], # suppress incompatible XLC line directives
   [msvc-*],
-    [CPP="$CC -nologo -EP"];
+    [CPP="$CC -nologo -EP"],
 #  TODO: why can we not use $CPP in multicore, fix this?
   [CPP="$CC -E -P"])
 
@@ -722,6 +722,8 @@ AC_CHECK_HEADER([sys/select.h], [AC_DEFINE([HAS_SYS_SELECT_H])], [],
   [#include <sys/types.h>])
 
 AC_CHECK_HEADER([stdatomic.h], [AC_DEFINE([HAS_STDATOMIC_H])])
+
+AC_CHECK_HEADER([sys/mman.h], [AC_DEFINE([HAS_SYS_MMAN_H])])
 
 # Checks for types
 
@@ -1781,8 +1783,8 @@ cclibs="$cclibs $mathlib"
 
 AS_CASE([$host],
   [*-*-mingw32],
-    [bytecclibs="-lws2_32 -lversion"
-    nativecclibs="-lws2_32 -lversion"],
+    [bytecclibs="-lws2_32 -lversion -lpthread -lgcc_eh"
+    nativecclibs="-lws2_32 -lversion -lpthread -lgcc_eh"],
   [*-pc-windows],
     [bytecclibs="advapi32.lib ws2_32.lib version.lib"
     nativecclibs="advapi32.lib ws2_32.lib version.lib"],

@@ -1,4 +1,7 @@
 #define CAML_INTERNALS
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
@@ -101,7 +104,14 @@ void caml_setup_eventlog()
   caml_plat_lock(&lock);
   if (pthread_key_create(&evbuf_pkey, &thread_teardown_evbuf) == 0 &&
       (output = fopen(filename, "w"))) {
-    char* fullname = realpath(filename, 0);
+    char* fullname;
+#ifdef _WIN32
+    fullname = (char*)malloc(MAX_PATH * sizeof(char));
+    /* XXX COMBAK Handle buffer too small case with realloc */
+    GetFullPathNameA(filename, MAX_PATH, fullname, NULL);
+#else
+    fullname = realpath(filename, 0);
+#endif
     fprintf(stderr, "Tracing events to %s\n", fullname);
     free(fullname);
     fprintf(output,

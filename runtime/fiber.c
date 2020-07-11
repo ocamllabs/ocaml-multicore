@@ -31,7 +31,7 @@ static struct stack_info* alloc_stack_noexc(mlsize_t wosize, value hval, value h
 
   stack = caml_stat_alloc_noexc(sizeof(struct stack_info) +
                           sizeof(value) * wosize +
-                          8 /* for alignment */ +
+                          8 /* FIXNAT 16 */ /* for alignment */ +
                           sizeof(struct stack_handler));
   if (stack == NULL) {
     return NULL;
@@ -39,7 +39,7 @@ static struct stack_info* alloc_stack_noexc(mlsize_t wosize, value hval, value h
 
   /* Ensure 16-byte alignment because some architectures require it */
   hand = (struct stack_handler*)
-    (((uintnat)stack + sizeof(struct stack_info) + sizeof(value) * wosize + 8)
+    (((uintnat)stack + sizeof(struct stack_info) + sizeof(value) * wosize + 8 /* FIXNAT 16 */)
      & ((uintnat)-1 << 4));
   hand->handle_value = hval;
   hand->handle_exn = hexn;
@@ -48,8 +48,8 @@ static struct stack_info* alloc_stack_noexc(mlsize_t wosize, value hval, value h
   stack->handler = hand;
   stack->sp = (value*)hand;
   stack->magic = 42;
-  CAMLassert(Stack_high(stack) - Stack_base(stack) == wosize ||
-             Stack_high(stack) - Stack_base(stack) == wosize + 1);
+  CAMLassert(Stack_high(stack) - Stack_base(stack) == wosize /* FIXNAT + 1 */ ||
+             Stack_high(stack) - Stack_base(stack) == wosize + 1 /* FIXNAT 2 */);
   return stack;
 }
 
