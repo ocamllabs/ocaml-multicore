@@ -65,3 +65,6 @@ tests/promotion/bigrecmod.ml
 
 # instrumented runtime test is not very useful (and broken on multicore.) (#9413)
 tests/instrumented-runtime/'main.ml' with 1.1 (native)
+
+# disabled until ocaml-multicore#598 or similar PR lands
+tests/lib-systhreads/'eintr.ml' with 1.1.2 (native)
